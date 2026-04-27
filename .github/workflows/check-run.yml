@@ -1,0 +1,19 @@
+name: Vector - Check Run Trigger
+on:
+  check_run:
+    types: [created, completed]
+
+jobs:
+  test-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log check info
+        run: |
+          echo "=== CHECK RUN TRIGGER ==="
+          echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Check name: ${{ github.event.check_run.name }}"
+          echo "Status: ${{ github.event.check_run.status }}"
+          echo "Secret present: ${{ secrets.FAKE_SECRET != '' && 'YES' || 'NO' }}"
+          echo "========================="

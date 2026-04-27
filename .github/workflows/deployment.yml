@@ -1,0 +1,17 @@
+name: Vector - Deployment Trigger
+on: [deployment, deployment_status]
+
+jobs:
+  test-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log deployment info
+        run: |
+          echo "=== DEPLOYMENT TRIGGER ==="
+          echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Environment: ${{ github.event.deployment.environment }}"
+          echo "Ref: ${{ github.event.deployment.ref }}"
+          echo "Secret present: ${{ secrets.FAKE_SECRET != '' && 'YES' || 'NO' }}"
+          echo "=========================="
