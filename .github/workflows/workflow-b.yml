@@ -1,0 +1,36 @@
+name: Trusted Deploy
+
+on:
+  workflow_run:
+    workflows: ["Untrusted Build"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Process artifact
+        run: |
+          echo "=== TRUSTED WORKFLOW PROCESSING ARTIFACT ==="
+          echo "Upstream workflow: ${{ github.event.workflow_run.name }}"
+          echo "Upstream actor: ${{ github.event.workflow_run.actor.login }}"
+          echo "Upstream head_branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Artifact contents:"
+          cat build-output.txt
+          echo "============================================"
+          
+          # Simulate what a real deploy might do
+          if grep -q "malicious" build-output.txt; then
+            echo "⚠️ MALICIOUS CONTENT DETECTED IN ARTIFACT"
+          fi
