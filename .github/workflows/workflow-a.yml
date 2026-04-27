@@ -1,0 +1,26 @@
+name: Untrusted Build
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build artifact
+        run: |
+          echo "Building from PR..."
+          echo "Actor: ${{ github.actor }}"
+          echo "Repo: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "Is fork: ${{ github.event.pull_request.head.repo.fork }}"
+          echo "BUILD_DATA=fake_malicious_data_from_pr" > /tmp/build-output.txt
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: /tmp/build-output.txt
