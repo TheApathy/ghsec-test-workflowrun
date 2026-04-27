@@ -1,0 +1,19 @@
+name: Vector - Environment URL Injection
+on:
+  deployment:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: test-env
+      url: ${{ github.event.deployment.payload.url || 'http://default.com' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log deployment
+        run: |
+          echo "=== ENVIRONMENT URL INJECTION ==="
+          echo "Deployment URL: ${{ github.event.deployment.payload.url }}"
+          echo "Environment: ${{ github.event.deployment.environment }}"
+          echo "Secret present: ${{ secrets.FAKE_SECRET != '' && 'YES' || 'NO' }}"
+          echo "==================================="
